@@ -1,0 +1,28 @@
+services:
+  backend:
+    container_name: backend_mediq
+    env_file:
+      - ".env"
+    image: node:latest
+    command: bash -c "npm install && npm run dev"
+    working_dir: /home/node/app
+    ports:
+      - 8355:8355
+    volumes:
+      - .:/home/node/app
+  
+  database:
+    env_file: ".env"
+    image: postgres:17
+    container_name: postgres_mediq
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./dataset/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+
+  auth_database:
+    image: eqalpha/keydb:latest
+    container_name: keydb_mediq
+    ports:
+      - 6379:6379
